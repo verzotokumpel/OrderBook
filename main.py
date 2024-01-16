@@ -60,15 +60,17 @@ def generate_non_bricks():
         else:
             price1 = BID[i-1].price
         price2 = BID[i].price
+
         dif = (price1 - price2)/mid_price*100
         max_spread = dif - min_spread
         num_orders = 50-len(BID) if i == 6 else int(random.uniform(4, 8))
         for j in range(num_orders):
             order = Order(
                 price=price1-(random.uniform(min_spread, max_spread))/100*price1,
-                value=0,
+                value=group_budget_bid[i] if j == num_orders-1 else group_budget_bid[i] * (random.uniform(10, 50) / 100),
                 is_brick=False
             )
+            group_budget_bid[i] -= order.value
             BID.append(order)
     
     for i in range(9):
@@ -83,15 +85,12 @@ def generate_non_bricks():
         for j in range(num_orders):
             order = Order(
                 price=price1+(random.uniform(min_spread, max_spread))/100*price1,
-                value=0,
+                value=group_budget_ask[i] if j == num_orders-1 else group_budget_ask[i] * (random.uniform(10, 50) / 100),
                 is_brick=False
             )
+            group_budget_ask[i] -= order.value
             ASK.append(order)
-    
-    #     group_budget_bid.append(non_bricks_budget_bid*random.uniform(10, 50)/100)
-    #     non_bricks_budget_bid -= group_budget_bid[i]
-    # group_budget_bid.append(non_bricks_budget_bid)
-
+  
     BID.sort(key=lambda x: x.price, reverse=True)
     ASK.sort(key=lambda x: x.price)
     
