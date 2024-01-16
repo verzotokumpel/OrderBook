@@ -1,26 +1,20 @@
-def calculate_transactions(initial_amount, num_transactions):
-    transactions = []
-    factor = 1.25
+# Przykładowa klasa reprezentująca strukturę danych
+class Produkt:
+    def __init__(self, nazwa, cena):
+        self.nazwa = nazwa
+        self.price = cena
 
-    for i in range(num_transactions):
-        transaction_amount = initial_amount * (factor ** i)
-        transactions.append(transaction_amount)
+# Przykładowa tablica z obiektami Produkt
+produkty = [
+    Produkt("Laptop", 1200),
+    Produkt("Smartphone", 800),
+    Produkt("Tablet", 500),
+    Produkt("Kamera", 600),
+]
 
-    return transactions
+# Posortuj tablicę obiektów według klucza 'price'
+posortowane_produkty = sorted(produkty, key=lambda x: x.price)
 
-def main():
-    total_amount = 1000
-    num_transactions = 5
-
-    # Calculate the initial transaction amount
-    initial_transaction = total_amount / sum([1.25 ** i for i in range(num_transactions)])
-
-    # Calculate all transactions
-    transactions = calculate_transactions(initial_transaction, num_transactions)
-
-    # Print the result
-    for i, amount in enumerate(transactions, start=1):
-        print(f"Transaction {i}: ${amount:.2f}")
-
-if __name__ == "__main__":
-    main()
+# Wydrukuj posortowane obiekty
+for produkt in posortowane_produkty:
+    print(f"Nazwa: {produkt.nazwa}, Cena: {produkt.price}")
