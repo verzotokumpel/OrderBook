@@ -45,8 +45,6 @@ def generate_non_bricks():
     non_bricks_budget_ask = 0.3*total_budget_ask
     group_budget_bid = []
     group_budget_ask = []
-    non_bricks_bid_left = 43
-    non_bricks_ask_left = 41
 
     first_bid_budget_value = non_bricks_budget_bid / sum([1.25 ** i for i in range(7)])
     for i in range(7):
@@ -59,55 +57,37 @@ def generate_non_bricks():
     for i in range(7):
         if(i==0):
             price1 = mid_price
-            price2 = BID[i].price
-            dif = (price1 - price2)/mid_price*100
-            max_spread = dif - min_spread
-            for j in range(int(random.uniform(4, 7))):
-                order = Order(
-                    price=price1-(random.uniform(min_spread, max_spread))/100*price1,
-                    value=0,
-                    is_brick=False
-                )
-                BID.append(order)
         else:
             price1 = BID[i-1].price
-            price2 = BID[i].price
-            dif = (price1 - price2)/mid_price*100
-            max_spread = dif - min_spread
-            for j in range(int(random.uniform(4, 7))):
-                order = Order(
-                    price=price1-(random.uniform(min_spread, max_spread))/100*price1,
-                    value=0,
-                    is_brick=False
-                )
-                BID.append(order)
+        price2 = BID[i].price
+        dif = (price1 - price2)/mid_price*100
+        max_spread = dif - min_spread
+        num_orders = 50-len(BID) if i == 6 else int(random.uniform(4, 8))
+        for j in range(num_orders):
+            order = Order(
+                price=price1-(random.uniform(min_spread, max_spread))/100*price1,
+                value=0,
+                is_brick=False
+            )
+            BID.append(order)
     
     for i in range(9):
         if(i==0):
             price1 = mid_price
-            price2 = ASK[i].price
-            dif = (price2 - price1)/mid_price*100
-            max_spread = dif - min_spread
-            for j in range(int(random.uniform(4, 7))):
-                order = Order(
-                    price=price1+(random.uniform(min_spread, max_spread))/100*price1,
-                    value=0,
-                    is_brick=False
-                )
-                ASK.append(order)
         else:
             price1 = ASK[i-1].price
-            price2 = ASK[i].price
-            dif = (price2 - price1)/mid_price*100
-            max_spread = dif - min_spread
-            for j in range(int(random.uniform(4, 7))):
-                order = Order(
-                    price=price1+(random.uniform(min_spread, max_spread))/100*price1,
-                    value=0,
-                    is_brick=False
-                )
-                ASK.append(order)
-                
+        price2 = ASK[i].price
+        dif = (price2 - price1)/mid_price*100
+        max_spread = dif - min_spread
+        num_orders = 50-len(ASK) if i == 8 else int(random.uniform(3, 6))
+        for j in range(num_orders):
+            order = Order(
+                price=price1+(random.uniform(min_spread, max_spread))/100*price1,
+                value=0,
+                is_brick=False
+            )
+            ASK.append(order)
+    
     #     group_budget_bid.append(non_bricks_budget_bid*random.uniform(10, 50)/100)
     #     non_bricks_budget_bid -= group_budget_bid[i]
     # group_budget_bid.append(non_bricks_budget_bid)
