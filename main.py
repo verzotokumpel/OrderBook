@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 import random
 
+#2 kolumny 
+# ammount value/price 
+# value ask | bid 
+
 BID = []
 ASK = []
 mid_price = 12.21
@@ -50,7 +54,7 @@ def generate_non_bricks():
     for i in range(7):
         group_budget_bid.append(first_bid_budget_value * (growth_speed ** i))
     
-    first_ask_budget_value = non_bricks_budget_ask / sum([1.25 ** i for i in range(7)])
+    first_ask_budget_value = non_bricks_budget_ask / sum([1.25 ** i for i in range(9)])
     for i in range(9):
         group_budget_ask.append(first_ask_budget_value * (growth_speed ** i))
     
@@ -96,10 +100,17 @@ def generate_non_bricks():
     
 
 def print_order_book():
-    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("VALUE", "BID","---------","MID_PRICE","---------","ASK", "VALUE"))
+    total_bid_value = 0
+    for order in BID:
+        total_bid_value += order.value
+    total_ask_value = 0
+    for order in ASK:
+        total_ask_value += order.value
+    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("TOTAL BID VALUE:", round(total_bid_value, 2), "-----","-----","-----","-----", "TOTAL ASK VALUE:", round(total_ask_value, 2)))
+    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("AMOUNT", "VALUE", "BID","---------","MID_PRICE","---------","ASK", "VALUE", "AMOUNT"))
     for i, (bid_order, ask_order) in enumerate(zip(BID, ASK)):
         mid_price_str = mid_price if i == 0 else "" 
-        print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format(round(bid_order.value, 2) ,round(bid_order.price, 3), "",mid_price_str,"", round(ask_order.price, 3), round(ask_order.value, 2)))
+        print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format(round(bid_order.value/bid_order.price, 2),round(bid_order.value, 2) ,round(bid_order.price, 3), "",mid_price_str,"", round(ask_order.price, 3), round(ask_order.value, 2), round(ask_order.value/ask_order.price, 2)))
 
 def main():
     init_build()
