@@ -7,7 +7,7 @@ import random
 
 BID = []
 ASK = []
-mid_price = 12.21
+mid_price = 1
 total_budget_bid = 5000
 total_budget_ask = 5000
 growth_speed = 1.25
@@ -44,7 +44,6 @@ def init_build():
         ASK.append(order)
 
 def generate_non_bricks():
-    min_spread = 0.5
     non_bricks_budget_bid = 0.3*total_budget_bid
     non_bricks_budget_ask = 0.3*total_budget_ask
     group_budget_bid = []
@@ -58,31 +57,34 @@ def generate_non_bricks():
     for i in range(9):
         group_budget_ask.append(first_ask_budget_value * (growth_speed ** i))
     
+    min_spread = 0.01
     for i in range(7):
         if(i==0):
             price1 = mid_price
         else:
             price1 = BID[i-1].price
         price2 = BID[i].price
-
-        dif = (price1 - price2)/mid_price*100
-        max_spread = dif - min_spread
+        min_spread += i/5
+        dif = (price2 - price1)*100
+        max_spread = dif 
         num_orders = 50-len(BID) if i == 6 else int(random.uniform(4, 8))
-        for j in range(num_orders):
+        for j in range(num_orders):    
             order = Order(
-                price=price1-(random.uniform(min_spread, max_spread))/100*price1,
+                price=(random.uniform(price1, price2)),
                 value=group_budget_bid[i] if j == num_orders-1 else group_budget_bid[i] * (random.uniform(10, 50) / 100),
                 is_brick=False
             )
             group_budget_bid[i] -= order.value
             BID.append(order)
     
+    min_spread = 0.01
     for i in range(9):
         if(i==0):
             price1 = mid_price
         else:
             price1 = ASK[i-1].price
         price2 = ASK[i].price
+        min_spread += i/7
         dif = (price2 - price1)/mid_price*100
         max_spread = dif - min_spread
         num_orders = 50-len(ASK) if i == 8 else int(random.uniform(3, 6))
@@ -106,11 +108,15 @@ def print_order_book():
     total_ask_value = 0
     for order in ASK:
         total_ask_value += order.value
-    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("TOTAL BID VALUE:", round(total_bid_value, 2), "-----","-----","-----","-----", "TOTAL ASK VALUE:", round(total_ask_value, 2)))
-    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("AMOUNT", "VALUE", "BID","---------","MID_PRICE","---------","ASK", "VALUE", "AMOUNT"))
+    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("TOTAL BID VALUE:", round(total_bid_value, 2), "-----","-----","-------","-------","-----","-----", "TOTAL ASK VALUE:", round(total_ask_value, 2)))
+    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("CTV", "AMOUNT", "VALUE", "BID","---------","MID_PRICE","---------","ASK", "VALUE", "AMOUNT", "CTV"))
+    cumulative_ask = 0
+    cumulative_bid = 0
     for i, (bid_order, ask_order) in enumerate(zip(BID, ASK)):
+        cumulative_bid += bid_order.value
+        cumulative_ask += ask_order.value
         mid_price_str = mid_price if i == 0 else "" 
-        print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format(round(bid_order.value/bid_order.price, 2),round(bid_order.value, 2) ,round(bid_order.price, 3), "",mid_price_str,"", round(ask_order.price, 3), round(ask_order.value, 2), round(ask_order.value/ask_order.price, 2)))
+        print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format(f"{round(cumulative_bid/total_bid_value*100, 2)}%" ,round(bid_order.value/bid_order.price, 2),round(bid_order.value, 2) ,round(bid_order.price, 3), "",mid_price_str,"", round(ask_order.price, 3), round(ask_order.value, 2), round(ask_order.value/ask_order.price, 2), f"{round(cumulative_ask/total_ask_value*100, 2)}%"))
 
 def main():
     init_build()
