@@ -1,10 +1,6 @@
 from dataclasses import dataclass
 import random
 
-#2 kolumny 
-# ammount value/price 
-# value ask | bid 
-
 BID = []
 ASK = []
 mid_price = 1
@@ -57,40 +53,46 @@ def generate_non_bricks():
     for i in range(9):
         group_budget_ask.append(first_ask_budget_value * (growth_speed ** i))
     
-    min_spread = 0.01
+    #min_spread = 0.01
     for i in range(7):
         if(i==0):
             price1 = mid_price
         else:
             price1 = BID[i-1].price
         price2 = BID[i].price
-        min_spread += i/5
+        #min_spread += i/5
         dif = (price2 - price1)*100
-        max_spread = dif 
+        #max_spread = dif 
         num_orders = 50-len(BID) if i == 6 else int(random.uniform(4, 8))
-        for j in range(num_orders):    
+        for j in range(num_orders):  
+            x = random.uniform(price1, price2)
+            while x in BID:
+                x = random.uniform(price1, price2)
             order = Order(
-                price=(random.uniform(price1, price2)),
+                price=(x),
                 value=group_budget_bid[i] if j == num_orders-1 else group_budget_bid[i] * (random.uniform(10, 50) / 100),
                 is_brick=False
             )
             group_budget_bid[i] -= order.value
             BID.append(order)
     
-    min_spread = 0.01
+    #min_spread = 0.01
     for i in range(9):
         if(i==0):
             price1 = mid_price
         else:
             price1 = ASK[i-1].price
         price2 = ASK[i].price
-        min_spread += i/7
+        #min_spread += i/7
         dif = (price2 - price1)/mid_price*100
-        max_spread = dif - min_spread
-        num_orders = 50-len(ASK) if i == 8 else int(random.uniform(3, 6))
+        #max_spread = dif - min_spread
+        num_orders = 50-len(ASK) if i == 8 else int(random.uniform(4, 6))
         for j in range(num_orders):
+            x = random.uniform(price1, price2)
+            while x in ASK:
+                random.uniform(price1, price2)
             order = Order(
-                price=price1+(random.uniform(min_spread, max_spread))/100*price1,
+                price=(x),
                 value=group_budget_ask[i] if j == num_orders-1 else group_budget_ask[i] * (random.uniform(10, 50) / 100),
                 is_brick=False
             )
